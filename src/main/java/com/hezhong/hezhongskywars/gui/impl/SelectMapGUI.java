@@ -55,7 +55,7 @@ public class SelectMapGUI extends MultiPageGUI {
                 dis = new ItemStack(XMaterial.LAPIS_BLOCK.parseMaterial());
             }
             lore.add("&a等待中");
-            lore.add("&9点击以尝试加入");
+            lore.add("&9点击加入&7|&e右键旁观");
 
         } else if (game.getGameStatus() == GameStatus.STARTING) {
             if (canJoinPlayers > 0) {
@@ -64,16 +64,16 @@ public class SelectMapGUI extends MultiPageGUI {
                 dis = new ItemStack(XMaterial.LAPIS_BLOCK.parseMaterial());
             }
             lore.add("&b启动中");
-            lore.add("&9点击以尝试加入");
+            lore.add("&9点击加入&7|&e右键旁观");
 
         } if (game.getGameStatus() == GameStatus.PLAYING) {
             dis = new ItemStack(XMaterial.REDSTONE_BLOCK.parseMaterial());
             lore.add("&c游玩中");
-            lore.add("&9点击以尝试旁观");
+            lore.add("&9点击旁观");
         } else if (game.getGameStatus() == GameStatus.STOPPED) {
             dis = new ItemStack(XMaterial.COAL_BLOCK.parseMaterial());
             lore.add("&c已停止");
-            lore.add("&9点击以尝试旁观");
+            lore.add("&9点击旁观");
         } else if (game.getGameStatus() == GameStatus.RESETTING) {
             dis = new ItemStack(XMaterial.CLOCK.parseMaterial());
             lore.add("&f重置中");
@@ -108,6 +108,9 @@ public class SelectMapGUI extends MultiPageGUI {
         if (event.isLeftClick()) {
             String mapName = game.getMapName();
             player.performCommand("hsw play " + mapName);
+        } else if (event.isRightClick()) {
+            String mapName = game.getMapName();
+            player.performCommand("hsw spectate " + mapName);
         }
     }
 }

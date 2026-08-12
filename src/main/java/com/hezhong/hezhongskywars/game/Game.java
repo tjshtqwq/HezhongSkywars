@@ -87,9 +87,9 @@ public class Game {
        taskManager.getCheckIfNoPlayer().runTimer(100, 0);
     }
 
-    public boolean addPlayer(Player player) {
+    public boolean addPlayer(Player player, boolean spectate) {
         // 必须设置SwPlayer状态。不能重复调用。
-        if (gameStatus == GameStatus.WAITING || gameStatus == GameStatus.STARTING) {
+        if ((gameStatus == GameStatus.WAITING || gameStatus == GameStatus.STARTING) && !spectate) {
             if (getAlivePlayers().size() >= maxPlayers) {
                 return false;
             }
@@ -116,7 +116,7 @@ public class Game {
                 // 准备开始
                 countdownAndAutoStart();
             }
-        } else if (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.STOPPED) {
+        } else if (gameStatus == GameStatus.PLAYING || gameStatus == GameStatus.STOPPED || gameStatus == GameStatus.WAITING || gameStatus == GameStatus.STARTING) {
             // 中途进入，直接旁观
             if (!playingPlayerStatus.containsKey(player.getUniqueId())) {
                 playingPlayerStatus.put(player.getUniqueId(), new SwPlayingGamePlayer(player, true));
@@ -336,6 +336,18 @@ public class Game {
         if (getAlivePlayers().isEmpty()) {
             HezhongSkywars.INSTANCE.getLogger().warning("Will Force reset game " + mapName + " after 20s, because of no player in game!");
             Bukkit.getScheduler().runTaskLater(HezhongSkywars.INSTANCE.getPlugin(), () -> {
+                taskManager.stopAll();
+
+                for (Player player : getPlayersInWorld()) {
+                    SwPlayer sp = SwPlayerManager.getPlayer(player);
+                    sp.setPlayingGame(null);
+                    restoreHide(player);
+                    player.setAllowFlight(false);
+                    player.getInventory().clear();
+                    player.getInventory().setArmorContents(null);
+                    player.teleport(Bukkit.getWorld(ConfigValues.lobbyWorld).getSpawnLocation());
+                }
+
                 resetGame();
             }, 20L * 20);
             return;
@@ -399,7 +411,7 @@ public class Game {
         Bukkit.getScheduler().runTaskLater(HezhongSkywars.INSTANCE.getPlugin(), () -> {
             taskManager.stopAll();
 
-            for (Player player : allPlayers) {
+            for (Player player : getPlayersInWorld()) {
                 SwPlayer sp = SwPlayerManager.getPlayer(player);
                 sp.setPlayingGame(null);
                 restoreHide(player);
@@ -408,6 +420,7 @@ public class Game {
                 player.getInventory().setArmorContents(null);
                 player.teleport(Bukkit.getWorld(ConfigValues.lobbyWorld).getSpawnLocation());
             }
+
             resetGame();
         }, 20 * 20);
     }

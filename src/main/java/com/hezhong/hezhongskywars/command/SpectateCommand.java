@@ -11,9 +11,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class PlayCommand extends HezhongSkywarsCommand {
-    public PlayCommand() {
-        super("play", false, "[mapName]", "游玩一个地图");
+public class SpectateCommand extends HezhongSkywarsCommand {
+    public SpectateCommand() {
+        super("spectate", false, "[mapName]", "旁观一个地图");
     }
 
     @Override
@@ -21,12 +21,6 @@ public class PlayCommand extends HezhongSkywarsCommand {
         if (cs instanceof Player) {
             Player p = (Player) cs;
             SwPlayer sp = SwPlayerManager.getPlayer(p);
-            if (args.length < 2) {
-                p.sendMessage(ColorT.t("&e自动寻找中......"));
-                HezhongSkywars.INSTANCE.getGameManager().getQueueManager().findGame(sp);
-                return;
-            }
-
             Game game = HezhongSkywars.INSTANCE.getGameManager().getGames().get(args[1]);
             if (game == null) {
                 cs.sendMessage(ColorT.t("&c地图不存在"));
@@ -36,7 +30,7 @@ public class PlayCommand extends HezhongSkywarsCommand {
                 cs.sendMessage(ColorT.t("&c地图正在重置"));
                 return;
             }
-            sp.joinGame(game, false);
+            sp.joinGame(game, true);
             cs.sendMessage(ColorT.t("&a把你发送到游戏 " + args[1]));
         } else {
             cs.sendMessage(ColorT.t("&c仅限玩家操作！"));

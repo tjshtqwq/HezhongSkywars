@@ -50,11 +50,11 @@ public class SwPlayer {
         scoreBoardUpdater = new PlayerScoreboard(this);
     }
 
-    public boolean joinGame(Game g) {
+    public boolean joinGame(Game g, boolean spectate) {
         if (playingGame != null) {
             return false;
         }
-        if (g.addPlayer(player)) playingGame = g;
+        if (g.addPlayer(player, spectate)) playingGame = g;
         return true;
     }
 

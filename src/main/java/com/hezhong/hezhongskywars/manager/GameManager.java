@@ -76,12 +76,16 @@ public class GameManager {
                 CompletableFuture<Boolean> futureUnload = new CompletableFuture<>();
                 Bukkit.getScheduler().runTask(HezhongSkywars.INSTANCE.getPlugin(), () -> {
                     if (Bukkit.getWorld(mc.getCopyWorld()) != null) {
-                        Bukkit.unloadWorld(mc.getCopyWorld(), false);
+                        // 必须保存，否则爆炸
+                        boolean success = Bukkit.unloadWorld(mc.getCopyWorld(), true);
+                        if (!success) {
+                            HezhongSkywars.INSTANCE.getLogger().severe("HSW unload world " + mc.getCopyWorld() + " failed!!!");
+                        }
                     }
                     Bukkit.getScheduler().runTaskLater(HezhongSkywars.INSTANCE.getPlugin(), () -> {
                         // 如果不延迟的话，可能导致文件句柄不释放，导致重置异常
                         futureUnload.complete(true);
-                    }, 10);
+                    }, 20);
                 });
                 futureUnload.join();
                 // 世界卸载后，复制一份地图

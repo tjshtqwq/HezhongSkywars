@@ -6,7 +6,9 @@ import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.utils.Permission;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -14,14 +16,16 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.projectiles.ProjectileSource;
 
 public class GameListener implements Listener {
-    // TODO: 弹射物等的伤害追踪，追踪到damager
+    // TODO: 弹射物等的伤害追踪，追踪到Damager
     @EventHandler
     public void onStart(HSWGameStartEvent e) {
         String mapName = e.getMapName();
@@ -154,7 +158,15 @@ public class GameListener implements Listener {
         if (ent instanceof Player) {
             Player p = (Player) ent;
             Entity damager = e.getDamager();
-            if (damager instanceof Player) {
+            if (damager instanceof Projectile projectile) {
+                ProjectileSource projectileSource = projectile.getShooter();
+                if (projectileSource instanceof LivingEntity) {
+                    damager = (Entity) projectileSource;
+                } else {
+                    return;
+                }
+            }
+            if (damager instanceof Player && damager != p) {
                 Player damagerPlayer = (Player) damager;
                 SwPlayer sp = SwPlayerManager.getPlayer(p);
                 if (sp == null) return;
@@ -197,8 +209,7 @@ public class GameListener implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (!(e.getWhoClicked() instanceof Player player)) return;
-        Player p =  (Player) e.getWhoClicked();
+        if (!(e.getWhoClicked() instanceof Player p)) return;
         SwPlayer sp = SwPlayerManager.getPlayer(p);
         if (sp == null) return;
         Game playingGame = sp.getPlayingGame();
@@ -209,6 +220,5 @@ public class GameListener implements Listener {
             }
         }
     }
-
     // Join/Quit处理集中在#com.hezhong.hezhongskywars.listeners.JoinQuitListener
 }

@@ -32,6 +32,7 @@ public class CommandProcessor implements CommandExecutor {
         registerCommand(new HubCommand());
         registerCommand(new SelectKitCommand());
         registerCommand(new GuiCommand());
+        registerCommand(new SpectateCommand());
     }
 
     @Override
