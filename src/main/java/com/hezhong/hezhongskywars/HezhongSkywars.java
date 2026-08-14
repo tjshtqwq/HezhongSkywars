@@ -52,6 +52,8 @@ public enum HezhongSkywars {
         this.logger = plugin.getLogger();
 
         logger.info(ColorT.t("&aStarting &bHSW"));
+        int pluginId = 33372;
+        Metrics metrics = new Metrics(plugin, pluginId);
 
         configManager = new ConfigManager(plugin);
         configManager.loadConfig();
