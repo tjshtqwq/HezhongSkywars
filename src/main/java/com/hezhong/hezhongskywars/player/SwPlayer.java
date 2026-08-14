@@ -2,6 +2,7 @@ package com.hezhong.hezhongskywars.player;
 
 import com.hezhong.hezhongskywars.config.ConfigValues;
 import com.hezhong.hezhongskywars.game.Game;
+import com.hezhong.hezhongskywars.player.party.SwParty;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class SwPlayer {
     private String setUpMapName = ""; // 是游戏地图名，不是MC服务器世界名。取世界名需要读配置！
     private SwPlayerSetupMapStatus setupMapStatus = new SwPlayerSetupMapStatus();
     private Location nextSpawnLocation;
+
+    private SwParty party;
 
     // 独立世界功能会利用隐藏玩家来控制TAB
     // 为了避免控制TAB的隐藏和游戏中旁观者隐藏打架，我们需要这个Set
@@ -134,6 +137,19 @@ public class SwPlayer {
 
         public SwPlayerKit(String kitName) {
             this.kitName = kitName;
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class SwPartyPlayer {
+        private final UUID playerUuid;
+        private SwParty parent;
+        private boolean own = false;
+        public SwPartyPlayer(UUID playerUuid, SwParty parent, boolean own) {
+            this.playerUuid = playerUuid;
+            this.parent = parent;
+            this.own = own;
         }
     }
 
