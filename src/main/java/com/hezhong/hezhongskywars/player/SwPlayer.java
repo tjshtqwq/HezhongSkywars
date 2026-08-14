@@ -57,6 +57,15 @@ public class SwPlayer {
         if (playingGame != null) {
             return false;
         }
+        if (!spectate) {
+            // 不旁观，考虑队伍
+            if (party != null) {
+                SwPartyPlayer spp = party.getPlayers().get(player.getUniqueId());
+                if (spp.isOwn()) {
+                    // 预留
+                }
+            }
+        }
         if (g.addPlayer(player, spectate)) playingGame = g;
         return true;
     }

@@ -7,20 +7,18 @@ import com.hezhong.hezhongskywars.utils.ColorT;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 public class SwParty {
-    private final List<SwPlayer.SwPartyPlayer> players = new ArrayList<>();
+    private final Map<UUID, SwPlayer.SwPartyPlayer> players = new HashMap<>();
     private String name;
     private Game playingGame;
     // owner必须无队伍才可创建队伍
     public SwParty(String name, SwPlayer owner) {
         this.name = name;
         // 赋予Owner
-        players.add(new SwPlayer.SwPartyPlayer(owner.getPlayer().getUniqueId(), this, true));
+        players.put(owner.getPlayer().getUniqueId(), new SwPlayer.SwPartyPlayer(owner.getPlayer().getUniqueId(), this, true));
         owner.setParty(this);
     }
     public boolean addPlayer(SwPlayer player) {
@@ -30,7 +28,7 @@ public class SwParty {
                 player.getPlayer().sendMessage(ColorT.t("&c&l此队伍已满！"));
                 return false;
             }
-            players.add(new SwPlayer.SwPartyPlayer(player.getPlayer().getUniqueId(), this, false));
+            players.put(player.getPlayer().getUniqueId(), new SwPlayer.SwPartyPlayer(player.getPlayer().getUniqueId(), this, false));
             player.setParty(this);
             player.getPlayer().sendMessage(ColorT.t("&a你已加入队伍！"));
             return true;
@@ -41,8 +39,8 @@ public class SwParty {
     }
     public boolean removePlayer(SwPlayer player) {
         if (player.getParty() == this) {
-            boolean removed = players.removeIf(spp -> spp.getPlayerUuid() == player.getPlayer().getUniqueId());
-            if (removed) {
+            SwPlayer.SwPartyPlayer spp = players.remove(player.getPlayer().getUniqueId());
+            if (spp != null) {
                 player.setParty(null);
                 player.getPlayer().sendMessage(ColorT.t("&a你已成功退出 &e " + name + " &a队伍！"));
                 return true;
@@ -56,7 +54,7 @@ public class SwParty {
         }
     }
     public void removeAll() {
-        for (SwPlayer.SwPartyPlayer spp : players) {
+        for (SwPlayer.SwPartyPlayer spp : players.values()) {
             SwPlayer player = SwPlayerManager.getPlayer(spp.getPlayerUuid());
             if (player != null) {
                 player.setParty(null);
@@ -68,12 +66,17 @@ public class SwParty {
 
     public boolean isOwn(SwPlayer sp) {
         boolean found = false;
-        for (SwPlayer.SwPartyPlayer spp : players) {
+        for (SwPlayer.SwPartyPlayer spp : players.values()) {
             if (spp.getPlayerUuid() == sp.getPlayer().getUniqueId() && spp.isOwn()) {
                 found = true;
                 break;
             }
         }
         return found;
+    }
+
+    public void moveToGame(Game game) {
+        // 预留
+        return;
     }
 }
