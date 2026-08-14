@@ -35,6 +35,9 @@ public class JoinQuitListener implements Listener {
         final SwPlayer p = SwPlayerManager.getPlayer(player);
         if (lobbyWorld != null) {
             player.teleport(lobbyWorld.getSpawnLocation());
+            // 重置经验
+            player.setLevel(0);
+            player.setExp(0);
             p.setNextSpawnLocation(lobbyWorld.getSpawnLocation());
         } else {
             HezhongSkywars.INSTANCE.getLogger().warning("HSW LobbyWorld is Null?");

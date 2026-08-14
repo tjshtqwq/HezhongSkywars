@@ -26,7 +26,7 @@ public class SwPlayer {
     private Game playingGame; // 玩家在什么游戏内，包括游玩和旁观。
     private final Scoreboard scoreBoard;
     private final Objective scoreBoardObjective;
-    private final PlayerScoreboard scoreBoardUpdater;
+    private final PlayerGeneralTask scoreBoardUpdater;
 
     private boolean settingUpMap = false;
     private String setUpMapName = ""; // 是游戏地图名，不是MC服务器世界名。取世界名需要读配置！
@@ -50,7 +50,7 @@ public class SwPlayer {
         scoreBoardObjective.setDisplayName(ConfigValues.serverName);
         scoreBoardObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
         player.setScoreboard(scoreBoard);
-        scoreBoardUpdater = new PlayerScoreboard(this);
+        scoreBoardUpdater = new PlayerGeneralTask(this);
     }
 
     public boolean joinGame(Game g, boolean spectate) {

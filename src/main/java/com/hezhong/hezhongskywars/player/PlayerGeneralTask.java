@@ -11,7 +11,7 @@ import org.bukkit.scoreboard.Team;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerScoreboard {
+public class PlayerGeneralTask {
 
     private static final String[] ENTRIES = {
             "§8§a§r", "§8§b§r", "§8§c§r", "§8§d§r", "§8§e§r", "§8§f§r",
@@ -22,13 +22,18 @@ public class PlayerScoreboard {
     private final List<Team> teamCache = new ArrayList<>();
     private final SwPlayer sp;
 
-    public PlayerScoreboard(SwPlayer sp) {
+    public PlayerGeneralTask(SwPlayer sp) {
         this.sp = sp;
     }
 
     public void update() {
-        if (sp.getPlayingGame() == null) updateLobbyScoreboard();
+        if (sp.getPlayingGame() == null) {
+            updateLobbyScoreboard();
+            sp.getPlayer().setExp(0);
+            sp.getPlayer().setLevel(sp.getStats().getInGameLevel());
+        }
         else updateInGameScoreboard(sp.getPlayingGame());
+
     }
 
     private void updateLobbyScoreboard() {
