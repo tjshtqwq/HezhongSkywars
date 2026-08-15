@@ -7,6 +7,8 @@ import com.hezhong.hezhongskywars.db.DataBaseController;
 import com.hezhong.hezhongskywars.game.GameListener;
 // import com.hezhong.hezhongskywars.game.gui.GUIListener;
 import com.hezhong.hezhongskywars.gui.GUIListener;
+import com.hezhong.hezhongskywars.listeners.BungeeCordCrossServerMessageListener;
+import com.hezhong.hezhongskywars.listeners.CrossServerMessageListener;
 import com.hezhong.hezhongskywars.listeners.GeneralListener;
 import com.hezhong.hezhongskywars.listeners.JoinQuitListener;
 import com.hezhong.hezhongskywars.manager.GameManager;
@@ -47,6 +49,8 @@ public enum HezhongSkywars {
     private DataBaseController database;
     private Logger logger;
 
+    public static final String CHANNEL_NAME = "hezhongsw:csm";
+
     public void start(HezhongSkywarsLoader plugin) {
         this.plugin = plugin;
         this.logger = plugin.getLogger();
@@ -83,6 +87,10 @@ public enum HezhongSkywars {
             ListenerManager.generalListener = new GeneralListener();
         if (ListenerManager.independentWorldManager == null)
             ListenerManager.independentWorldManager = new IndependentWorldManager();
+        if (ListenerManager.crossServerMessageListener == null)
+            ListenerManager.crossServerMessageListener = new CrossServerMessageListener();
+        if (ListenerManager.bungeeCordCrossServerMessageListener == null)
+            ListenerManager.bungeeCordCrossServerMessageListener = new BungeeCordCrossServerMessageListener();
 
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.gameListener, plugin);
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.joinQuitListener, plugin);

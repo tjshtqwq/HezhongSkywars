@@ -29,8 +29,11 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/*
+TODO: 加GameViewer，代替GUI/Command硬读ISwGame
+ */
 @Getter
-public class Game {
+public class Game implements ISwGame {
     // 完整的游戏单例
 
     private final String mapName;
