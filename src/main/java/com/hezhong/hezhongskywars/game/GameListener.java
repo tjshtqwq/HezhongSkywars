@@ -39,7 +39,7 @@ public class GameListener implements Listener {
         Player p = e.getPlayer();
         SwPlayer sp = SwPlayerManager.getPlayer(p);
         if (sp == null) return;
-        ISwGame playingGame = sp.getPlayingGame();
+        Game playingGame = sp.getPlayingGame();
         if (playingGame != null) {
             SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
             if (swpgp.getStatus() != SwPlayingGamePlayer.PlayerStatus.ALIVE || playingGame.getGameStatus() != GameStatus.PLAYING) {
@@ -56,7 +56,7 @@ public class GameListener implements Listener {
         Player p = e.getPlayer();
         SwPlayer sp = SwPlayerManager.getPlayer(p);
         if (sp == null) return;
-        ISwGame playingGame = sp.getPlayingGame();
+        Game playingGame = sp.getPlayingGame();
         if (playingGame != null) {
             SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
             if (swpgp.getStatus() != SwPlayingGamePlayer.PlayerStatus.ALIVE || playingGame.getGameStatus() != GameStatus.PLAYING) {
@@ -74,7 +74,7 @@ public class GameListener implements Listener {
         if (p != null) {
             SwPlayer sp = SwPlayerManager.getPlayer(p);
             if (sp == null) return;
-            ISwGame playingGame = sp.getPlayingGame();
+            Game playingGame = sp.getPlayingGame();
             if (playingGame == null) return;
             String msg = playingGame.processDeath(p, p.getKiller(), false);
             e.setDeathMessage(msg);
@@ -87,7 +87,7 @@ public class GameListener implements Listener {
         if (p != null) {
             SwPlayer sp = SwPlayerManager.getPlayer(p);
             if (sp == null) return;
-            ISwGame playingGame = sp.getPlayingGame();
+            Game playingGame = sp.getPlayingGame();
             if (playingGame == null) {
                 e.setRespawnLocation(HezhongSkywars.INSTANCE.getLobbySpawnLocation());
             } else {
@@ -103,7 +103,7 @@ public class GameListener implements Listener {
         if (sp == null) return;
         if (sp.getPlayingGame() != null) {
             // 换世界了，就是退游戏了
-            ISwGame playingGame = sp.getPlayingGame();
+            Game playingGame = sp.getPlayingGame();
             playingGame.processDeath(p, null, true);
         }
     }
@@ -113,7 +113,7 @@ public class GameListener implements Listener {
             Player p = e.getPlayer();
             SwPlayer sp = SwPlayerManager.getPlayer(p);
             if (sp == null) return;
-            ISwGame playingGame = sp.getPlayingGame();
+            Game playingGame = sp.getPlayingGame();
             if (playingGame != null) {
                 SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
                 if (swpgp.getStatus() == SwPlayingGamePlayer.PlayerStatus.ALIVE) {
@@ -140,7 +140,7 @@ public class GameListener implements Listener {
             Player p = (Player) ent;
             SwPlayer sp = SwPlayerManager.getPlayer(p);
             if (sp == null) return;
-            ISwGame playingGame = sp.getPlayingGame();
+            Game playingGame = sp.getPlayingGame();
             if (playingGame != null) {
                 SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
                 if (playingGame.getGameStatus() != GameStatus.PLAYING || playingGame.getRunnedTime() <= 5 || swpgp.getStatus() != SwPlayingGamePlayer.PlayerStatus.ALIVE) {
@@ -170,7 +170,7 @@ public class GameListener implements Listener {
                 Player damagerPlayer = (Player) damager;
                 SwPlayer sp = SwPlayerManager.getPlayer(p);
                 if (sp == null) return;
-                ISwGame playingGame = sp.getPlayingGame();
+                Game playingGame = sp.getPlayingGame();
                 if (playingGame != null) {
                     // 1 不允许死去的玩家攻击
                     SwPlayingGamePlayer swpgpDamager = playingGame.getPlayingPlayer(damagerPlayer.getUniqueId());
@@ -194,7 +194,7 @@ public class GameListener implements Listener {
         Player p = e.getPlayer();
         SwPlayer sp = SwPlayerManager.getPlayer(p);
         if (sp == null) return;
-        ISwGame playingGame = sp.getPlayingGame();
+        Game playingGame = sp.getPlayingGame();
         if (playingGame != null) {
             SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
             if (playingGame.getGameStatus() != GameStatus.PLAYING || playingGame.getRunnedTime() <= 1 || swpgp.getStatus() != SwPlayingGamePlayer.PlayerStatus.ALIVE) {
@@ -212,7 +212,7 @@ public class GameListener implements Listener {
         if (!(e.getWhoClicked() instanceof Player p)) return;
         SwPlayer sp = SwPlayerManager.getPlayer(p);
         if (sp == null) return;
-        ISwGame playingGame = sp.getPlayingGame();
+        Game playingGame = sp.getPlayingGame();
         if (playingGame != null) {
             SwPlayingGamePlayer swpgp = playingGame.getPlayingPlayer(p.getUniqueId());
             if (swpgp.getStatus() != SwPlayingGamePlayer.PlayerStatus.ALIVE) {

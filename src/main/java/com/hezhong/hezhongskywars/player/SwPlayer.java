@@ -1,7 +1,7 @@
 package com.hezhong.hezhongskywars.player;
 
 import com.hezhong.hezhongskywars.config.ConfigValues;
-import com.hezhong.hezhongskywars.game.ISwGame;
+import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.player.party.SwParty;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
@@ -23,7 +23,7 @@ import java.util.*;
 public class SwPlayer {
     private final Player player;
     private DatabaseStatsData stats; // Null说明未加载
-    private ISwGame playingGame; // 玩家在什么游戏内，包括游玩和旁观。
+    private Game playingGame; // 玩家在什么游戏内，包括游玩和旁观。
     private final Scoreboard scoreBoard;
     private final Objective scoreBoardObjective;
     private final PlayerGeneralTask scoreBoardUpdater;
@@ -53,7 +53,7 @@ public class SwPlayer {
         scoreBoardUpdater = new PlayerGeneralTask(this);
     }
 
-    public boolean joinGame(ISwGame g, boolean spectate) {
+    public boolean joinGame(Game g, boolean spectate) {
         if (playingGame != null) {
             return false;
         }

@@ -2,7 +2,7 @@ package com.hezhong.hezhongskywars.listeners;
 
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.config.ConfigValues;
-import com.hezhong.hezhongskywars.game.ISwGame;
+import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.manager.ListenerManager;
 import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
@@ -66,7 +66,7 @@ public class JoinQuitListener implements Listener {
         SwPlayer sp = SwPlayerManager.getPlayer(event.getPlayer());
         if (sp != null) {
             if (sp.getPlayingGame() != null) {
-                ISwGame playing = sp.getPlayingGame();
+                Game playing = sp.getPlayingGame();
                 playing.processDeath(event.getPlayer(), null, true);
             }
             SwPlayerManager.removePlayer(event.getPlayer());

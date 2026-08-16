@@ -7,6 +7,7 @@ import com.hezhong.hezhongskywars.config.MapConfig;
 import com.hezhong.hezhongskywars.game.Chest;
 import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.queue.QueueManager;
+import com.hezhong.hezhongskywars.utils.cross.SwGameView;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
@@ -27,6 +28,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 public class GameManager {
     private final Plugin serverPlugin;
@@ -35,13 +37,54 @@ public class GameManager {
     @Getter
     private final QueueManager queueManager = new QueueManager();
 
-    // K:V => 地图名 : 游戏实例
+    // 服务器名:(地图名:游戏视图)
+    // 由跨服消息更新，大厅服用来显示其它服务器的游戏
+    @Getter
+    private final Map<String, Map<String, SwGameView>> remoteGameViews = new ConcurrentHashMap<>();
+
     public GameManager(Plugin serverPlugin) {
         this.serverPlugin = serverPlugin;
     }
 
+    // 本地游戏的视图，每次构建保证新鲜
+    public List<SwGameView> getLocalGameViews() {
+        return games.values().stream().map(this::toSwGameView).collect(Collectors.toList());
+    }
 
-    // 此代码需要异步执行 Async
+    public SwGameView toSwGameView(Game game) {
+        return new SwGameView(
+                game.getMapName(),
+                "local",
+                game.getGameStatus(),
+                game.getAlivePlayers().size(),
+                game.getSpectators().size(),
+                game.getMaxPlayers(),
+                game.getPlayersToAutostart(),
+                game.getCountdownRemaining()
+        );
+    }
+
+    // 覆盖某个远端服务器的整个游戏列表
+    public void updateRemoteGameViews(String serverName, List<SwGameView> views) {
+        Map<String, SwGameView> byMapName = views.stream()
+                .collect(Collectors.toMap(SwGameView::getMapName, v -> v));
+        remoteGameViews.put(serverName, byMapName);
+    }
+
+    // 远端服务器下线时移除（下线会发ServerInfoMessage => run=false）
+    public void removeRemoteServer(String serverName) {
+        remoteGameViews.remove(serverName);
+    }
+
+    // 全部
+    public List<SwGameView> getAllGameViews() {
+        List<SwGameView> all = new ArrayList<>(getLocalGameViews());
+        for (Map<String, SwGameView> perServer : remoteGameViews.values()) {
+            all.addAll(perServer.values());
+        }
+        return all;
+    }
+
     public void init() {
         // 必须主线程运行
         // 必须确保配置已加载
@@ -58,7 +101,7 @@ public class GameManager {
         });
 
     }
-
+    // 此代码需要异步执行
     public void resetGame(String mapName) throws FileNotFoundException {
         try {
             // 主线程执行会导致死锁主线程，绝对不能主线程执行

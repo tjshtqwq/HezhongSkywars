@@ -12,6 +12,10 @@ basicInfo:
   lobbyWorld: "world" # 大厅世界
 
   defaultGameMode: "adventure" # 大厅的默认游戏模式，可选survival/daventure/spectator/creative
+bungee:
+  bungee: true # 启用跨服？
+  proxyType: "bc" # bc即BungeeCord，vc即Velocity
+  serverType: "lobby" # lobby即大厅服务器，game即游戏服务器
 database:
   type: "sqlite" # sqlite / mysql
   

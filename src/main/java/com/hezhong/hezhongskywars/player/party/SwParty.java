@@ -1,6 +1,6 @@
 package com.hezhong.hezhongskywars.player.party;
 
-import com.hezhong.hezhongskywars.game.ISwGame;
+import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.utils.ColorT;
@@ -13,7 +13,7 @@ import java.util.*;
 public class SwParty {
     private final Map<UUID, SwPlayer.SwPartyPlayer> players = new HashMap<>();
     private String name;
-    private ISwGame playingGame;
+    private Game playingGame;
     // owner必须无队伍才可创建队伍
     public SwParty(String name, SwPlayer owner) {
         this.name = name;
@@ -75,7 +75,7 @@ public class SwParty {
         return found;
     }
 
-    public void moveToGame(ISwGame game) {
+    public void moveToGame(Game game) {
         // 预留
         return;
     }

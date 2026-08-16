@@ -2,7 +2,7 @@ package com.hezhong.hezhongskywars.command;
 
 import com.hezhong.hezhongskywars.config.ConfigValues;
 import com.hezhong.hezhongskywars.config.KitConfig;
-import com.hezhong.hezhongskywars.game.ISwGame;
+import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.utils.ColorT;
@@ -27,7 +27,7 @@ public class SelectKitCommand extends HezhongSkywarsCommand {
             SwPlayer sp = SwPlayerManager.getPlayer(p);
             if (sp.getPlayingGame() != null) {
                 // 在游戏中，允许选择职业
-                ISwGame playing = sp.getPlayingGame();
+                Game playing = sp.getPlayingGame();
                 if (!ConfigValues.kitConfigs.containsKey(kitName)) {
                     p.sendMessage(ColorT.t("&c职业不存在。"));
                 } else if (sp.hasKit(kitName)) {

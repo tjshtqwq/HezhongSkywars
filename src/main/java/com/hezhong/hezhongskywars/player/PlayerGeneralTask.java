@@ -1,7 +1,7 @@
 package com.hezhong.hezhongskywars.player;
 
 import com.hezhong.hezhongskywars.config.ConfigValues;
-import com.hezhong.hezhongskywars.game.ISwGame;
+import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.GameEvent;
 import com.hezhong.hezhongskywars.game.GameStatus;
 import com.hezhong.hezhongskywars.game.SwPlayingGamePlayer;
@@ -49,7 +49,7 @@ public class PlayerGeneralTask {
         });
     }
 
-    private void updateInGameScoreboard(ISwGame game) {
+    private void updateInGameScoreboard(Game game) {
         setTitle("&e&lSKYWARS &c&l⚔");
 
         if (game.getGameStatus() == GameStatus.WAITING) {

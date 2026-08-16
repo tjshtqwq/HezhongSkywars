@@ -18,7 +18,6 @@ public class BungeeCrossServerMessageSender implements CrossServerMessageSender 
     @Override
     public void sendTo(CrossServerMessagePacket packet) {
         if (plugin != null) {
-            String currentServer = plugin.getServer().getName(); // 服务器名
             plugin.getServer().sendPluginMessage(plugin, CHANNEL_NAME, packet.toBytes());
         }
     }

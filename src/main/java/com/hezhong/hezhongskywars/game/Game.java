@@ -30,10 +30,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
-TODO: 加GameViewer，代替GUI/Command硬读ISwGame
+TODO: 加GameViewer，代替GUI/Command硬读Game
  */
 @Getter
-public class Game implements ISwGame {
+public class Game {
     // 完整的游戏单例
 
     private final String mapName;
