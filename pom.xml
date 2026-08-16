@@ -71,6 +71,18 @@
                                     <pattern>com.google.gson</pattern>
                                     <shadedPattern>com.hezhong.libs.gson</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>redis.clients</pattern>
+                                    <shadedPattern>com.hezhong.libs.jedis</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.apache.commons.pool2</pattern>
+                                    <shadedPattern>com.hezhong.libs.pool2</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>org.json</pattern>
+                                    <shadedPattern>com.hezhong.libs.json</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
@@ -122,6 +134,12 @@
             <artifactId>bungeecord-api</artifactId>
             <version>1.19-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>net.md-5</groupId>
+                    <artifactId>brigadier</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- Lombok -->
         <dependency>
@@ -189,6 +207,22 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Redis 跨服消息总线 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>5.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
     </dependencies>
 </project>

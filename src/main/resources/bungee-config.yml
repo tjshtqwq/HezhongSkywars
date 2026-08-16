@@ -1,0 +1,7 @@
+# BungeeCord端 HezhongSkywars 配置
+# 该文件由BC插件释放到 plugins/HezhongSkywars/config.yml
+redis:
+  host: ""
+  port: 1
+  password: ""
+  channel: ""

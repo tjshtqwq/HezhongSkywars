@@ -7,7 +7,6 @@ import com.hezhong.hezhongskywars.db.DataBaseController;
 import com.hezhong.hezhongskywars.game.GameListener;
 // import com.hezhong.hezhongskywars.game.gui.GUIListener;
 import com.hezhong.hezhongskywars.gui.GUIListener;
-import com.hezhong.hezhongskywars.listeners.BungeeCordCrossServerMessageListener;
 import com.hezhong.hezhongskywars.listeners.CrossServerMessageListener;
 import com.hezhong.hezhongskywars.listeners.GeneralListener;
 import com.hezhong.hezhongskywars.listeners.JoinQuitListener;
@@ -21,8 +20,10 @@ import com.hezhong.hezhongskywars.task.CrossServerAutoReport;
 import com.hezhong.hezhongskywars.task.PlayerScoreBoardTask;
 import com.hezhong.hezhongskywars.task.ServerDatabaseUpdateTask;
 import com.hezhong.hezhongskywars.utils.ColorT;
-import com.hezhong.hezhongskywars.utils.cross.BungeeCrossServerMessageSender;
 import com.hezhong.hezhongskywars.utils.cross.CrossServerMessageSender;
+import com.hezhong.hezhongskywars.utils.cross.RedisCrossServerMessageSender;
+import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import lombok.NonNull;
@@ -52,8 +53,6 @@ public enum HezhongSkywars {
     private DataBaseController database;
     private Logger logger;
     private CrossServerMessageSender crossServerMessageSender;
-
-    public static final String CHANNEL_NAME = "hezhongsw:csm";
 
     public void start(HezhongSkywarsLoader plugin) {
         this.plugin = plugin;
@@ -93,8 +92,6 @@ public enum HezhongSkywars {
             ListenerManager.independentWorldManager = new IndependentWorldManager();
         if (ListenerManager.crossServerMessageListener == null)
             ListenerManager.crossServerMessageListener = new CrossServerMessageListener();
-        if (ListenerManager.bungeeCordCrossServerMessageListener == null)
-            ListenerManager.bungeeCordCrossServerMessageListener = new BungeeCordCrossServerMessageListener();
 
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.gameListener, plugin);
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.joinQuitListener, plugin);
@@ -104,11 +101,8 @@ public enum HezhongSkywars {
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.independentWorldManager, plugin);
 
         if (ConfigValues.bungeeEnabled) {
-            if (ConfigValues.proxyType == ConfigValues.ProxyType.BC) {
-                crossServerMessageSender = new BungeeCrossServerMessageSender();
-                crossServerMessageSender.registerChannel(plugin);
-                plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, CHANNEL_NAME, ListenerManager.bungeeCordCrossServerMessageListener);
-            }
+            crossServerMessageSender = new RedisCrossServerMessageSender();
+            crossServerMessageSender.registerChannel(plugin);
         }
 
         // 命令
@@ -131,6 +125,16 @@ public enum HezhongSkywars {
 
     public void stop() {
         logger.info("Stopping HSW......");
+
+        // 正常关闭时广播下线，让大厅移除本服
+        if (ConfigValues.bungeeEnabled && crossServerMessageSender != null) {
+            ServerInfoMessage infoMsg = new ServerInfoMessage(ConfigValues.BCserverName, ConfigValues.serverType, false, null, 0);
+            CrossServerMessagePacket offlinePacket = new CrossServerMessagePacket(ConfigValues.BCserverName, "", ConfigValues.serverType, ServerInfoMessage.ServerType.ANY, CrossServerMessagePacket.MsgCommand.SERVER_INFO,
+                    CrossServerMessagePacket.GSON.toJson(infoMsg));
+            crossServerMessageSender.sendTo(offlinePacket);
+            crossServerMessageSender.shutdown();
+        }
+
         if (database != null) { // 万一是因为没数据库关闭的呢？
             final Map<UUID, DatabaseStatsData> datas = new HashMap<>();
             for (Player pp : Bukkit.getOnlinePlayers()) {

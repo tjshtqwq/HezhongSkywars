@@ -2,7 +2,6 @@ package com.hezhong.hezhongskywars.manager;
 
 import com.hezhong.hezhongskywars.game.GameListener;
 import com.hezhong.hezhongskywars.gui.GUIListener;
-import com.hezhong.hezhongskywars.listeners.BungeeCordCrossServerMessageListener;
 import com.hezhong.hezhongskywars.listeners.CrossServerMessageListener;
 import com.hezhong.hezhongskywars.listeners.GeneralListener;
 import com.hezhong.hezhongskywars.listeners.JoinQuitListener;
@@ -18,5 +17,4 @@ public class ListenerManager {
     public static IndependentWorldManager independentWorldManager;
 
     public static CrossServerMessageListener crossServerMessageListener;
-    public static BungeeCordCrossServerMessageListener bungeeCordCrossServerMessageListener;
 }

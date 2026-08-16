@@ -17,19 +17,21 @@ public class CrossServerMessageListener {
     // BC，VC的监听器调用即可
     private static final Gson gson = new Gson();
     public void receive(CrossServerMessagePacket packet) {
-        if (packet.getFromType() == ServerInfoMessage.ServerType.GAME) {
-            if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.SERVER_INFO) {
-                // GAME服更新数据。我们这里也要同步更新
-                String rawJson = packet.getMessage();
-                // 反序列化过去
-                ServerInfoMessage msg = gson.fromJson(rawJson, ServerInfoMessage.class);
-                if (msg.isRun()) {
+        if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.SERVER_INFO) {
+            // 任意来源的服务器状态：GAME上报游戏列表/上线，PROXY广播下线
+            ServerInfoMessage msg = gson.fromJson(packet.getMessage(), ServerInfoMessage.class);
+            if (msg.isRun()) {
+                if (packet.getFromType() == ServerInfoMessage.ServerType.GAME) {
                     HezhongSkywars.INSTANCE.getGameManager().updateRemoteGameViews(msg.getServerName(), msg.getGames());
-                } else {
-                    // 下线了
-                    HezhongSkywars.INSTANCE.getGameManager().removeRemoteServer(msg.getServerName());
                 }
-            } else if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.TELEPORT_CONFIRM) {
+            } else {
+                // 下线了（GAME服自报或BC检测到掉线广播）
+                HezhongSkywars.INSTANCE.getGameManager().removeRemoteServer(msg.getServerName());
+            }
+            return;
+        }
+        if (packet.getFromType() == ServerInfoMessage.ServerType.GAME) {
+            if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.TELEPORT_CONFIRM) {
                 String rawJson = packet.getMessage();
 
                 TeleportConfirmMessage msg = gson.fromJson(rawJson, TeleportConfirmMessage.class);
@@ -37,6 +39,7 @@ public class CrossServerMessageListener {
                 // 可以去send了
 
                 SwPlayer sp = SwPlayerManager.getPlayer(msg.getPlayerUuid());
+                if (sp == null) return;
                 sp.sendTo(msg.getServerName(), ServerInfoMessage.ServerType.GAME);
             } else if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.UPDATE_GAME) {
                 String rawJson = packet.getMessage();

@@ -103,6 +103,12 @@ public class ConfigManager {
             ConfigValues.serverType = ServerInfoMessage.ServerType.valueOf(mainConfig.getString("bungee.serverType").toUpperCase());
             ConfigValues.BCserverName = mainConfig.getString("bungee.serverName");
 
+            // Redis
+            ConfigValues.redisHost = mainConfig.getString("redis.host", "127.0.0.1");
+            ConfigValues.redisPort = mainConfig.getInt("redis.port", 6379);
+            ConfigValues.redisPassword = mainConfig.getString("redis.password", "");
+            ConfigValues.redisChannel = mainConfig.getString("redis.channel", "hsw:csm");
+
             ConfigValues.coinsWinAdd = mainConfig.getInt("coins.winAdd");
             ConfigValues.coinsKillAdd = mainConfig.getInt("coins.killAdd");
             ConfigValues.expKillAdd = mainConfig.getInt("exp.killAdd");

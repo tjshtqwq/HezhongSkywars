@@ -22,6 +22,11 @@ public class ConfigValues {
     public static ServerInfoMessage.ServerType serverType;
     public static String BCserverName;
 
+    public static String redisHost;
+    public static int redisPort;
+    public static String redisPassword;
+    public static String redisChannel;
+
     public static Map<String, ChestConfig> chestConfigs = new HashMap<>(); // K:V type:config
     public static Map<String, MapConfig> mapConfigs = new HashMap<>(); // K:V mapName:config
     public static Map<String, KitConfig> kitConfigs = new HashMap<>(); // K:V kitName:config
