@@ -36,6 +36,8 @@ public class GameManager {
     private final Map<String, Game> games = new ConcurrentHashMap<>();
     @Getter
     private final QueueManager queueManager = new QueueManager();
+    @Getter
+    private final Map<String, Integer> hubServers = new ConcurrentHashMap<>();
 
     // 服务器名:(地图名:游戏视图)
     // 由跨服消息更新，大厅服用来显示其它服务器的游戏
@@ -91,7 +93,7 @@ public class GameManager {
 
     public void updateRemoteGameViews(String serverName, String mapName, SwGameView view) {
         // 增量更新
-        if (!remoteGameViews.containsKey(serverName)) remoteGameViews.put(serverName, new HashMap<>());
+        if (!remoteGameViews.containsKey(serverName)) remoteGameViews.put(serverName, new ConcurrentHashMap<>());
         Map<String, SwGameView> views = remoteGameViews.get(serverName);
         views.put(mapName, view);
         remoteGameViews.put(serverName, views);

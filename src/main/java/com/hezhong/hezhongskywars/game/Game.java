@@ -15,7 +15,7 @@ import com.hezhong.hezhongskywars.utils.SpecialItems;
 import com.hezhong.hezhongskywars.utils.bukkit.CTask;
 import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
 import com.hezhong.hezhongskywars.utils.cross.UpdateGameMessage;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import com.hezhong.hezhongskywars.utils.type.Pair;
 import lombok.Getter;
@@ -27,9 +27,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Getter
@@ -60,7 +60,7 @@ public class Game {
         this.world = world;
         setGameStatus(GameStatus.WAITING);
         allPlayers = new ArrayList<>();
-        playingPlayerStatus = new HashMap<>();
+        playingPlayerStatus = new ConcurrentHashMap<>();
         this.chests = chests;
         this.spawns = new ArrayList<>();
         this.events = events;
@@ -348,7 +348,7 @@ public class Game {
                     player.setAllowFlight(false);
                     player.getInventory().clear();
                     player.getInventory().setArmorContents(null);
-                    player.teleport(Bukkit.getWorld(ConfigValues.lobbyWorld).getSpawnLocation());
+                    player.performCommand("hsw hub");
                 }
 
                 resetGame();
@@ -421,7 +421,7 @@ public class Game {
                 player.setAllowFlight(false);
                 player.getInventory().clear();
                 player.getInventory().setArmorContents(null);
-                player.teleport(Bukkit.getWorld(ConfigValues.lobbyWorld).getSpawnLocation());
+                player.performCommand("hsw hub");
             }
 
             resetGame();

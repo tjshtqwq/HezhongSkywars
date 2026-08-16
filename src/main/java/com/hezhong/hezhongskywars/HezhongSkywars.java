@@ -23,10 +23,9 @@ import com.hezhong.hezhongskywars.utils.ColorT;
 import com.hezhong.hezhongskywars.utils.cross.CrossServerMessageSender;
 import com.hezhong.hezhongskywars.utils.cross.RedisCrossServerMessageSender;
 import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -128,7 +127,7 @@ public enum HezhongSkywars {
 
         // 正常关闭时广播下线，让大厅移除本服
         if (ConfigValues.bungeeEnabled && crossServerMessageSender != null) {
-            ServerInfoMessage infoMsg = new ServerInfoMessage(ConfigValues.BCserverName, ConfigValues.serverType, false, null, 0);
+            ServerInfoMessage infoMsg = new ServerInfoMessage(ConfigValues.BCserverName, ConfigValues.serverType, false, null, 0, -1);
             CrossServerMessagePacket offlinePacket = new CrossServerMessagePacket(ConfigValues.BCserverName, "", ConfigValues.serverType, ServerInfoMessage.ServerType.ANY, CrossServerMessagePacket.MsgCommand.SERVER_INFO,
                     CrossServerMessagePacket.GSON.toJson(infoMsg));
             crossServerMessageSender.sendTo(offlinePacket);

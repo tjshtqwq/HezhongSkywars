@@ -1,4 +1,4 @@
-package com.hezhong.hezhongskywars.utils.type;
+package com.hezhong.hezhongskywars.utils.cross;
 
 import com.google.gson.Gson;
 import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage.ServerType;

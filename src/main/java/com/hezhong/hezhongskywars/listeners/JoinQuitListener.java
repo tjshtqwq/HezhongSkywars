@@ -23,13 +23,13 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JoinQuitListener implements Listener {
     @Getter
-    private final Map<UUID, TeleportRequestMessage> requested = new HashMap<>();
+    private final Map<UUID, TeleportRequestMessage> requested = new ConcurrentHashMap<>();
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         // Pre-Process

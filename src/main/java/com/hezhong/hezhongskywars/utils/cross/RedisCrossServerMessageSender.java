@@ -2,7 +2,6 @@ package com.hezhong.hezhongskywars.utils.cross;
 
 import com.hezhong.hezhongskywars.config.ConfigValues;
 import com.hezhong.hezhongskywars.manager.ListenerManager;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 

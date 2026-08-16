@@ -10,14 +10,15 @@ import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
 import com.hezhong.hezhongskywars.utils.cross.TeleportConfirmMessage;
 import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
 import com.hezhong.hezhongskywars.utils.cross.UpdateGameMessage;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
 
 public class CrossServerMessageListener {
     // 逻辑在这里
     // BC，VC的监听器调用即可
     private static final Gson gson = new Gson();
     public void receive(CrossServerMessagePacket packet) {
-        if (!packet.getTo().equals(ConfigValues.BCserverName) || packet.getFrom().equals(ConfigValues.BCserverName)) return; // 避免回环，或者收到自己不该收的包
+        if (packet.getFrom().equals(ConfigValues.BCserverName)) return; // 避免回环，或者收到自己不该收的包
+        if (!packet.getTo().equals(ConfigValues.BCserverName) && !packet.getTo().equals("")) return; // getTo为空就是广播
         if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.SERVER_INFO) {
             // 任意来源的服务器状态：GAME上报游戏列表/上线，PROXY广播下线
             ServerInfoMessage msg = gson.fromJson(packet.getMessage(), ServerInfoMessage.class);
@@ -25,9 +26,13 @@ public class CrossServerMessageListener {
                 if (packet.getFromType() == ServerInfoMessage.ServerType.GAME) {
                     HezhongSkywars.INSTANCE.getGameManager().updateRemoteGameViews(msg.getServerName(), msg.getGames());
                 }
+                if (packet.getFromType() == ServerInfoMessage.ServerType.LOBBY) {
+                    HezhongSkywars.INSTANCE.getGameManager().getHubServers().put(msg.getServerName(), (msg.getMaxPlayers() - msg.getPlayers()));
+                }
             } else {
                 // 下线了（GAME服自报或BC检测到掉线广播）
                 HezhongSkywars.INSTANCE.getGameManager().removeRemoteServer(msg.getServerName());
+                HezhongSkywars.INSTANCE.getGameManager().getHubServers().remove(msg.getServerName());
             }
             return;
         }
@@ -58,8 +63,9 @@ public class CrossServerMessageListener {
                 ListenerManager.joinQuitListener.getRequested().put(requestMessage.getPlayerUuid(), requestMessage);
 
                 // 构造Confirm包
+                // getServerName()是本服，源服是getFrom
                 TeleportConfirmMessage message = new TeleportConfirmMessage(requestMessage.getServerName(), requestMessage.getTargetGame(), requestMessage.isSpectate(), requestMessage.getPlayerUuid());
-                CrossServerMessagePacket sendPacket = new CrossServerMessagePacket(ConfigValues.BCserverName, requestMessage.getServerName(),
+                CrossServerMessagePacket sendPacket = new CrossServerMessagePacket(ConfigValues.BCserverName, packet.getFrom(),
                         ServerInfoMessage.ServerType.GAME, packet.getFromType(), CrossServerMessagePacket.MsgCommand.TELEPORT_CONFIRM, gson.toJson(message));
                 HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(sendPacket);
             }

@@ -6,11 +6,10 @@ import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.player.party.SwParty;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
-import com.hezhong.hezhongskywars.utils.cross.CrossServerMessageSender;
 import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
 import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
 import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import lombok.Setter;
@@ -63,7 +62,7 @@ public class SwPlayer {
     }
 
     public boolean joinGame(SwGameView view, boolean spectate) {
-        if (!ConfigValues.bungeeEnabled || view.getServerName().equals("local")) {
+        if (!ConfigValues.bungeeEnabled || view.getServerName().equals(ConfigValues.BCserverName)) {
             // 本服：靠mapName索引到Game
             Game g = HezhongSkywars.INSTANCE.getGameManager().getGames().get(view.getMapName());
             if (g == null) {

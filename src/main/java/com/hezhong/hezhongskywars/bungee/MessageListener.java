@@ -3,7 +3,7 @@ package com.hezhong.hezhongskywars.bungee;
 import com.google.gson.Gson;
 import com.hezhong.hezhongskywars.utils.cross.RedisMessageManager;
 import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
-import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
