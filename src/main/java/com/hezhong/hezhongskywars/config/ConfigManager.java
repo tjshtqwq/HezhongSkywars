@@ -8,6 +8,7 @@ import com.hezhong.hezhongskywars.db.DataBaseType;
 import com.hezhong.hezhongskywars.game.GameEvent;
 import com.hezhong.hezhongskywars.utils.ColorT;
 import com.hezhong.hezhongskywars.utils.MathUtil;
+import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import com.hezhong.hezhongskywars.utils.type.Pair;
 import org.bukkit.GameMode;
@@ -95,6 +96,12 @@ public class ConfigManager {
             ConfigValues.serverName = ColorT.t(mainConfig.getString("basicInfo.serverName"));
             ConfigValues.lobbyWorld = mainConfig.getString("basicInfo.lobbyWorld");
             ConfigValues.defaultGameMode = GameMode.valueOf(mainConfig.getString("basicInfo.defaultGameMode").toUpperCase());
+
+            // 跨服
+            ConfigValues.bungeeEnabled = mainConfig.getBoolean("bungee.bungee");
+            ConfigValues.proxyType = ConfigValues.ProxyType.valueOf(mainConfig.getString("bungee.proxyType").toUpperCase());
+            ConfigValues.serverType = ServerInfoMessage.ServerType.valueOf(mainConfig.getString("bungee.serverType").toUpperCase());
+            ConfigValues.BCserverName = mainConfig.getString("bungee.serverName");
 
             ConfigValues.coinsWinAdd = mainConfig.getInt("coins.winAdd");
             ConfigValues.coinsKillAdd = mainConfig.getInt("coins.killAdd");

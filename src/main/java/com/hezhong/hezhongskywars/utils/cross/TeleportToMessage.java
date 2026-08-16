@@ -1,12 +1,15 @@
 package com.hezhong.hezhongskywars.utils.cross;
 
+import lombok.Getter;
+
 import java.util.UUID;
 
+@Getter
 public class TeleportToMessage {
-    private final String serverName;
+    private final String targetName;
     private final UUID playerUuid;
-    public TeleportToMessage(String serverName, UUID playerUuid) {
-        this.serverName = serverName;
+    public TeleportToMessage(String targetName, UUID playerUuid) {
+        this.targetName = targetName;
         this.playerUuid = playerUuid;
     }
 }

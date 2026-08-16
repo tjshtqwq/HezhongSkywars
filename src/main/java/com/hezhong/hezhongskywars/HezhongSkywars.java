@@ -17,9 +17,12 @@ import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.multiworld.IndependentWorldManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.setup.SetupListener;
+import com.hezhong.hezhongskywars.task.CrossServerAutoReport;
 import com.hezhong.hezhongskywars.task.PlayerScoreBoardTask;
 import com.hezhong.hezhongskywars.task.ServerDatabaseUpdateTask;
 import com.hezhong.hezhongskywars.utils.ColorT;
+import com.hezhong.hezhongskywars.utils.cross.BungeeCrossServerMessageSender;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessageSender;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import lombok.NonNull;
@@ -48,6 +51,7 @@ public enum HezhongSkywars {
     private GameManager gameManager;
     private DataBaseController database;
     private Logger logger;
+    private CrossServerMessageSender crossServerMessageSender;
 
     public static final String CHANNEL_NAME = "hezhongsw:csm";
 
@@ -99,12 +103,23 @@ public enum HezhongSkywars {
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.guiListener, plugin);
         plugin.getServer().getPluginManager().registerEvents(ListenerManager.independentWorldManager, plugin);
 
+        if (ConfigValues.bungeeEnabled) {
+            if (ConfigValues.proxyType == ConfigValues.ProxyType.BC) {
+                crossServerMessageSender = new BungeeCrossServerMessageSender();
+                crossServerMessageSender.registerChannel(plugin);
+                plugin.getServer().getMessenger().registerIncomingPluginChannel(plugin, CHANNEL_NAME, ListenerManager.bungeeCordCrossServerMessageListener);
+            }
+        }
+
         // 命令
         plugin.getCommand("hsw").setExecutor(new CommandProcessor());
 
         // 任务
         new PlayerScoreBoardTask().runTaskTimer(plugin, 0, 10);
         new ServerDatabaseUpdateTask().runTaskTimerAsynchronously(plugin, 0, 60 * 20);
+        if (ConfigValues.bungeeEnabled) {
+            new CrossServerAutoReport().runTaskTimerAsynchronously(plugin,0, 10 * 20);
+        }
 
 
 

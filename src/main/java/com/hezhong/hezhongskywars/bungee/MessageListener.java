@@ -2,9 +2,11 @@ package com.hezhong.hezhongskywars.bungee;
 
 import com.google.gson.Gson;
 import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
 import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.PluginMessageEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -44,15 +46,44 @@ public class MessageListener implements Listener {
                     servers.put(msg.getServerName(), msg.getServerType()); // 记录服务器
 
                     if (packet.getToType() != ServerInfoMessage.ServerType.PROXY) {
-                        // 转发
+                        // ServerInfo是广播包
                         for (Map.Entry<String, ServerInfoMessage.ServerType> entry : servers.entrySet()) {
-                            if (entry.getValue().equals(msg.getServerType())) {
+                            if (entry.getValue().equals(packet.getToType()) || packet.getToType() == ServerInfoMessage.ServerType.ANY) { // 广播到符合type的服务器
                                 ServerInfo s = plugin.getProxy().getServerInfo(entry.getKey());
                                 if (s != null) {
                                     s.sendData(CHANNEL_NAME, packet.toBytes());
+                                } else {
+                                    plugin.getLogger().severe("BungeeHSW Cannot find the server " + entry.getKey());
                                 }
                             }
                         }
+                    }
+                }
+
+                if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.TELEPORT_CONFIRM || packet.getCommand() == CrossServerMessagePacket.MsgCommand.TELEPORT_REQUEST ||
+                        packet.getCommand() == CrossServerMessagePacket.MsgCommand.UPDATE_GAME) {
+                    // 直接转发这两个包
+                    ServerInfo s = plugin.getProxy().getServerInfo(packet.getTo());
+                    if (s != null) {
+                        s.sendData(CHANNEL_NAME, packet.toBytes());
+                    } else {
+                        plugin.getLogger().severe("BungeeHSW Cannot find the server " + packet.getTo());
+                    }
+                }
+
+                if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.TELEPORT_TO) {
+                    // 直接传送，然后转发
+                    TeleportToMessage msg = gson.fromJson(packet.getMessage(), TeleportToMessage.class);
+                    ProxiedPlayer pplayer = plugin.getProxy().getPlayer(msg.getPlayerUuid());
+                    if (pplayer != null) {
+                        ServerInfo target = plugin.getProxy().getServerInfo(msg.getTargetName());
+                        if (target != null) {
+                            pplayer.connect(target);
+                        } else {
+                            plugin.getLogger().severe("BungeeHSW Cannot find the server " + msg.getTargetName());
+                        }
+                    } else {
+                        plugin.getLogger().severe("BungeeHSW Cannot find the proxied player " + msg.getPlayerUuid());
                     }
                 }
 

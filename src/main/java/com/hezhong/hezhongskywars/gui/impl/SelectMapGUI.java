@@ -2,14 +2,11 @@ package com.hezhong.hezhongskywars.gui.impl;
 
 import com.cryptomorin.xseries.XMaterial;
 import com.hezhong.hezhongskywars.HezhongSkywars;
-import com.hezhong.hezhongskywars.config.ConfigValues;
-import com.hezhong.hezhongskywars.config.KitConfig;
 import com.hezhong.hezhongskywars.game.GameStatus;
 import com.hezhong.hezhongskywars.gui.MultiPageGUI;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.utils.ColorT;
-import com.hezhong.hezhongskywars.utils.cross.SwGameView;
-import org.bukkit.Bukkit;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;

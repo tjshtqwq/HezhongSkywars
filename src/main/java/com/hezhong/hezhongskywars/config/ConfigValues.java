@@ -1,5 +1,6 @@
 package com.hezhong.hezhongskywars.config;
 
+import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
 import org.bukkit.GameMode;
 
 import java.util.ArrayList;
@@ -15,6 +16,12 @@ public class ConfigValues {
     public static String lobbyWorld;
     public static GameMode defaultGameMode;
     public static DataBaseConfig dataBaseConfig;
+
+    public static boolean bungeeEnabled;
+    public static ProxyType proxyType;
+    public static ServerInfoMessage.ServerType serverType;
+    public static String BCserverName;
+
     public static Map<String, ChestConfig> chestConfigs = new HashMap<>(); // K:V type:config
     public static Map<String, MapConfig> mapConfigs = new HashMap<>(); // K:V mapName:config
     public static Map<String, KitConfig> kitConfigs = new HashMap<>(); // K:V kitName:config
@@ -25,4 +32,9 @@ public class ConfigValues {
     public static List<Integer> levelNeedExps = new ArrayList<>();
     public static boolean multiWorldIndependentChat;
     public static boolean multiWorldIndependentTab;
+
+    public enum ProxyType {
+        BC,
+        VC
+    }
 }

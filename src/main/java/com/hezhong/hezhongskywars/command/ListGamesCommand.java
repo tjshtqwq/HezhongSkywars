@@ -2,7 +2,7 @@ package com.hezhong.hezhongskywars.command;
 
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.utils.ColorT;
-import com.hezhong.hezhongskywars.utils.cross.SwGameView;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 

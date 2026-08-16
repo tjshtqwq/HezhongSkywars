@@ -1,11 +1,12 @@
 package com.hezhong.hezhongskywars.utils.cross;
 
+import com.hezhong.hezhongskywars.game.SwGameView;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-public class ServerInfoMessage { // 任播消息
+public class ServerInfoMessage { // 广播包
     private final String serverName;
     private final ServerType serverType;
     private final boolean run; // 为false代表服务器下线
@@ -21,6 +22,7 @@ public class ServerInfoMessage { // 任播消息
     public enum ServerType {
         GAME,
         LOBBY,
-        PROXY
+        PROXY,
+        ANY
     }
 }

@@ -3,13 +3,17 @@ package com.hezhong.hezhongskywars.listeners;
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.config.ConfigValues;
 import com.hezhong.hezhongskywars.game.Game;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.manager.ListenerManager;
 import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.task.PlayerScoreBoardTask;
 import com.hezhong.hezhongskywars.utils.ColorT;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
+import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
+import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -19,9 +23,13 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 public class JoinQuitListener implements Listener {
+    @Getter
+    private final Map<UUID, TeleportRequestMessage> requested = new HashMap<>();
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         // Pre-Process
@@ -58,6 +66,13 @@ public class JoinQuitListener implements Listener {
 
         ListenerManager.independentWorldManager.handlePostJoin(event);
 
+        // 尝试进游戏
+        if (requested.containsKey(player.getUniqueId())) {
+            TeleportRequestMessage msg = requested.remove(player.getUniqueId());
+            SwGameView gameView = HezhongSkywars.INSTANCE.getGameManager().getGameView(msg.getTargetGame(), true);
+            p.joinGame(gameView, msg.isSpectate());
+        }
+
     }
 
     @EventHandler
@@ -77,7 +92,7 @@ public class JoinQuitListener implements Listener {
 
             Bukkit.getScheduler().runTaskAsynchronously(HezhongSkywars.INSTANCE.getPlugin(), () -> {
                 try {
-                    if (data.REFRESHED) {
+                    if (data.REFRESHED && !sp.isDbSaved()) {
                         HezhongSkywars.INSTANCE.getLogger().info("Saving data for " + uuid);
                         HezhongSkywars.INSTANCE.getDatabase().setDatabaseStats(uuid, data);
                         HezhongSkywars.INSTANCE.getLogger().info("Saved data for " + uuid);

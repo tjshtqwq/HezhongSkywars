@@ -1,15 +1,14 @@
-package com.hezhong.hezhongskywars.utils.cross;
+package com.hezhong.hezhongskywars.game;
 
-import com.hezhong.hezhongskywars.game.GameStatus;
 import lombok.Getter;
 
 @Getter
 public class SwGameView {
-    private final String mapName; // 标识地图名，不是copyName
+    private final String mapName; // 标识地图名
     private final String serverName; // 用于跨服，当前服就写local
     private final GameStatus gameStatus;
-    private final int players; // 当前游玩玩家数
-    private final int spectators; // 当前旁观玩家数
+    private final int players;
+    private final int spectators;
     private final int maxPlayers;
     private final int playersToAutostart;
     private final int countdownRemaining;

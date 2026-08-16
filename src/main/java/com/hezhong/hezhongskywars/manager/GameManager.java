@@ -7,7 +7,7 @@ import com.hezhong.hezhongskywars.config.MapConfig;
 import com.hezhong.hezhongskywars.game.Chest;
 import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.queue.QueueManager;
-import com.hezhong.hezhongskywars.utils.cross.SwGameView;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import lombok.Getter;
 import org.apache.commons.io.FileUtils;
@@ -46,7 +46,7 @@ public class GameManager {
         this.serverPlugin = serverPlugin;
     }
 
-    // 本地游戏的视图，每次构建保证新鲜
+    // 本地游戏的所有信息，不包含其它服务器的
     public List<SwGameView> getLocalGameViews() {
         return games.values().stream().map(this::toSwGameView).collect(Collectors.toList());
     }
@@ -54,7 +54,7 @@ public class GameManager {
     public SwGameView toSwGameView(Game game) {
         return new SwGameView(
                 game.getMapName(),
-                "local",
+                ConfigValues.bungeeEnabled ? ConfigValues.BCserverName : "local",
                 game.getGameStatus(),
                 game.getAlivePlayers().size(),
                 game.getSpectators().size(),
@@ -64,12 +64,39 @@ public class GameManager {
         );
     }
 
+    // 按地图名在所有视图（本地+远端）中查找
+    public SwGameView getGameView(String mapName, boolean local) {
+        if (!local) {
+            for (SwGameView view : getAllGameViews()) {
+                if (view.getMapName().equals(mapName)) {
+                    return view;
+                }
+            }
+        } else {
+            for (SwGameView view : getLocalGameViews()) {
+                if (view.getMapName().equals(mapName)) {
+                    return view;
+                }
+            }
+        }
+        return null;
+    }
+
     // 覆盖某个远端服务器的整个游戏列表
     public void updateRemoteGameViews(String serverName, List<SwGameView> views) {
         Map<String, SwGameView> byMapName = views.stream()
-                .collect(Collectors.toMap(SwGameView::getMapName, v -> v));
+                .collect(Collectors.toMap(SwGameView::getMapName, v -> v)); // 把Map构建出来（remote存储格式是Map套Map）
         remoteGameViews.put(serverName, byMapName);
     }
+
+    public void updateRemoteGameViews(String serverName, String mapName, SwGameView view) {
+        // 增量更新
+        if (!remoteGameViews.containsKey(serverName)) remoteGameViews.put(serverName, new HashMap<>());
+        Map<String, SwGameView> views = remoteGameViews.get(serverName);
+        views.put(mapName, view);
+        remoteGameViews.put(serverName, views);
+    }
+
 
     // 远端服务器下线时移除（下线会发ServerInfoMessage => run=false）
     public void removeRemoteServer(String serverName) {

@@ -30,7 +30,7 @@ public class QueueManager {
         } else {
             Game best = sortedList.get(0);
             sp.getPlayer().sendMessage(ColorT.t("&a把你发送到 " + best.getMapName()));
-            sp.joinGame(best, false);
+            sp.joinGame(HezhongSkywars.INSTANCE.getGameManager().toSwGameView(best), false);
         }
     }
 }

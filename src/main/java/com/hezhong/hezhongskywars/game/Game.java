@@ -13,6 +13,9 @@ import com.hezhong.hezhongskywars.utils.ColorT;
 import com.hezhong.hezhongskywars.utils.SimpleMath;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
 import com.hezhong.hezhongskywars.utils.bukkit.CTask;
+import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.utils.cross.UpdateGameMessage;
+import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import com.hezhong.hezhongskywars.utils.type.Pair;
 import lombok.Getter;
@@ -29,9 +32,6 @@ import org.bukkit.scheduler.BukkitTask;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/*
-TODO: 加GameViewer，代替GUI/Command硬读Game
- */
 @Getter
 public class Game {
     // 完整的游戏单例
@@ -625,6 +625,14 @@ public class Game {
     }
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
+        // Bungee则发包
+        if (ConfigValues.bungeeEnabled) {
+            UpdateGameMessage infoMsg = new UpdateGameMessage(HezhongSkywars.INSTANCE.getGameManager().toSwGameView(this));
+
+            CrossServerMessagePacket packet = new CrossServerMessagePacket(ConfigValues.BCserverName, "", ConfigValues.serverType, ServerInfoMessage.ServerType.LOBBY, CrossServerMessagePacket.MsgCommand.SERVER_INFO,
+                    CrossServerMessagePacket.GSON.toJson(infoMsg));
+            HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(packet);
+        }
         HSWGameStatusChangeEvent changeEvent = new HSWGameStatusChangeEvent(this, gameStatus);
         Bukkit.getPluginManager().callEvent(changeEvent);
     }

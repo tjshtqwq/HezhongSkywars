@@ -1,9 +1,16 @@
 package com.hezhong.hezhongskywars.player;
 
+import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.config.ConfigValues;
 import com.hezhong.hezhongskywars.game.Game;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.player.party.SwParty;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
+import com.hezhong.hezhongskywars.utils.cross.CrossServerMessageSender;
+import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
+import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
+import com.hezhong.hezhongskywars.utils.type.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +34,8 @@ public class SwPlayer {
     private final Scoreboard scoreBoard;
     private final Objective scoreBoardObjective;
     private final PlayerGeneralTask scoreBoardUpdater;
+
+    private boolean dbSaved = false; // 被跨服传送走的，这个为true
 
     private boolean settingUpMap = false;
     private String setUpMapName = ""; // 是游戏地图名，不是MC服务器世界名。取世界名需要读配置！
@@ -53,21 +62,39 @@ public class SwPlayer {
         scoreBoardUpdater = new PlayerGeneralTask(this);
     }
 
-    public boolean joinGame(Game g, boolean spectate) {
-        if (playingGame != null) {
-            return false;
-        }
-        if (!spectate) {
-            // 不旁观，考虑队伍
-            if (party != null) {
-                SwPartyPlayer spp = party.getPlayers().get(player.getUniqueId());
-                if (spp.isOwn()) {
-                    // 预留
+    public boolean joinGame(SwGameView view, boolean spectate) {
+        if (!ConfigValues.bungeeEnabled || view.getServerName().equals("local")) {
+            // 本服：靠mapName索引到Game
+            Game g = HezhongSkywars.INSTANCE.getGameManager().getGames().get(view.getMapName());
+            if (g == null) {
+                return false;
+            }
+            if (playingGame != null) {
+                return false;
+            }
+            if (!spectate) {
+                // 不旁观，考虑队伍
+                if (party != null) {
+                    SwPartyPlayer spp = party.getPlayers().get(player.getUniqueId());
+                    if (spp.isOwn()) {
+                        // 预留
+                    }
                 }
             }
+            if (g.addPlayer(player, spectate)) playingGame = g;
+            return true;
+        } else {
+            if (ConfigValues.serverType == ServerInfoMessage.ServerType.LOBBY) {
+                // 在大厅，可以传送了
+                // 构造包
+                TeleportRequestMessage request = new TeleportRequestMessage(view.getServerName(), view.getMapName(), spectate, player.getUniqueId());
+                CrossServerMessagePacket packet = new CrossServerMessagePacket(ConfigValues.BCserverName, view.getServerName(),
+                        ConfigValues.serverType, ServerInfoMessage.ServerType.GAME, CrossServerMessagePacket.MsgCommand.TELEPORT_REQUEST,
+                        CrossServerMessagePacket.GSON.toJson(request));
+                HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(packet);
+            }
+            return true;
         }
-        if (g.addPlayer(player, spectate)) playingGame = g;
-        return true;
     }
 
     public boolean hasKit(SwPlayerKit kit) {
@@ -115,12 +142,38 @@ public class SwPlayer {
     public void giveLobbyItems() {
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
-        player.getInventory().setItem(0, SpecialItems.toPlay());
-        player.getInventory().setItem(1, SpecialItems.mapSelector());
-        // 2: [Space]
-        player.getInventory().setItem(3, SpecialItems.hubGUI());
-        player.getInventory().setItem(4, SpecialItems.kitSelector());
+        if (!ConfigValues.bungeeEnabled || ConfigValues.serverType == ServerInfoMessage.ServerType.LOBBY) {
+            player.getInventory().setItem(0, SpecialItems.toPlay());
+            player.getInventory().setItem(1, SpecialItems.mapSelector());
+            // 2: [Space]
+            player.getInventory().setItem(3, SpecialItems.hubGUI());
+            player.getInventory().setItem(4, SpecialItems.kitSelector());
+        }
 
+    }
+
+    public void sendTo(String toServer, ServerInfoMessage.ServerType toType) {
+        Bukkit.getScheduler().runTaskAsynchronously(HezhongSkywars.INSTANCE.getPlugin(), () -> {
+            if (ConfigValues.bungeeEnabled) {
+                // 先存数据
+                try {
+                    if (stats.REFRESHED && !dbSaved) {
+                        HezhongSkywars.INSTANCE.getLogger().info("Saving data for " + player.getUniqueId());
+                        HezhongSkywars.INSTANCE.getDatabase().setDatabaseStats(player.getUniqueId(), stats);
+                        HezhongSkywars.INSTANCE.getLogger().info("Saved data for " + player.getUniqueId());
+                        dbSaved = true;
+                    }
+                } catch (Exception e) {
+                    HezhongSkywars.INSTANCE.getLogger().severe("Failed to save data for " + player.getUniqueId() + ", data may be lost!");
+                }
+
+                // 构造TP包
+                TeleportToMessage msg = new TeleportToMessage(toServer, player.getUniqueId());
+                CrossServerMessagePacket packet = new CrossServerMessagePacket(ConfigValues.BCserverName, toServer, ConfigValues.serverType, toType, CrossServerMessagePacket.MsgCommand.TELEPORT_TO,
+                        CrossServerMessagePacket.GSON.toJson(msg));
+                HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(packet);
+            }
+        });
     }
 
     @Getter

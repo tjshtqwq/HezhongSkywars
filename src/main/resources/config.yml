@@ -16,6 +16,7 @@ bungee:
   bungee: true # 启用跨服？
   proxyType: "bc" # bc即BungeeCord，vc即Velocity
   serverType: "lobby" # lobby即大厅服务器，game即游戏服务器
+  serverName: "lobby1" # BungeeCord中你服务器名称，必须准确
 database:
   type: "sqlite" # sqlite / mysql
   

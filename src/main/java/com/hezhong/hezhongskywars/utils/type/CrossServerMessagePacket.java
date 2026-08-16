@@ -9,11 +9,11 @@ public class CrossServerMessagePacket {
     private final ServerType fromType;
     private final ServerType toType;
     private final String from;
-    private final String to; // 此字段为空时，则根据toType广播
+    private final String to;
     private final MsgCommand command;
     private final String message; // 可以存json字串
 
-    private static final Gson GSON = new Gson(); // Gson序列化整个Packet类
+    public static final Gson GSON = new Gson(); // Gson序列化整个Packet类
     public CrossServerMessagePacket(String from, String to, ServerType fromType, ServerType toType, MsgCommand command, String message) {
         this.from = from;
         this.to = to;
@@ -37,6 +37,7 @@ public class CrossServerMessagePacket {
         TELEPORT_REQUEST,
         SERVER_INFO,
         TELEPORT_CONFIRM,
-        TELEPORT_TO;
+        TELEPORT_TO,
+        UPDATE_GAME,
     }
 }

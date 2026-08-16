@@ -6,6 +6,6 @@ public class HezhongSkywarsBungee extends Plugin {
     @Override
     public void onEnable() {
         new MessageListener(this);
-        getLogger().info("Hezhong Skywars BungeeCord >>> Message Transport Plugin");
+        getLogger().info("Bungee Hezhong Skywars > Proxy cross-server packet transportation...");
     }
 }
