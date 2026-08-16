@@ -629,7 +629,7 @@ public class Game {
         if (ConfigValues.bungeeEnabled) {
             UpdateGameMessage infoMsg = new UpdateGameMessage(HezhongSkywars.INSTANCE.getGameManager().toSwGameView(this));
 
-            CrossServerMessagePacket packet = new CrossServerMessagePacket(ConfigValues.BCserverName, "", ConfigValues.serverType, ServerInfoMessage.ServerType.LOBBY, CrossServerMessagePacket.MsgCommand.SERVER_INFO,
+            CrossServerMessagePacket packet = new CrossServerMessagePacket(ConfigValues.BCserverName, "", ConfigValues.serverType, ServerInfoMessage.ServerType.LOBBY, CrossServerMessagePacket.MsgCommand.UPDATE_GAME,
                     CrossServerMessagePacket.GSON.toJson(infoMsg));
             HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(packet);
         }

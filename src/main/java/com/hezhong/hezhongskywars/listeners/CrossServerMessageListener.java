@@ -17,6 +17,7 @@ public class CrossServerMessageListener {
     // BC，VC的监听器调用即可
     private static final Gson gson = new Gson();
     public void receive(CrossServerMessagePacket packet) {
+        if (!packet.getTo().equals(ConfigValues.BCserverName) || packet.getFrom().equals(ConfigValues.BCserverName)) return; // 避免回环，或者收到自己不该收的包
         if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.SERVER_INFO) {
             // 任意来源的服务器状态：GAME上报游戏列表/上线，PROXY广播下线
             ServerInfoMessage msg = gson.fromJson(packet.getMessage(), ServerInfoMessage.class);

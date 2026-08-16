@@ -20,7 +20,7 @@ public class ServerStatusListener implements Listener {
 
     @EventHandler
     public void onServerDisconnect(ServerDisconnectEvent e) {
-        // 服务器掉线（含崩溃），广播下线，子服端会移除该服的游戏缓存
+        // 服务器掉线，广播状态
         ServerInfoMessage msg = new ServerInfoMessage(e.getTarget().getName(), ServerInfoMessage.ServerType.PROXY, false, null, 0);
         CrossServerMessagePacket packet = new CrossServerMessagePacket("proxy", "", ServerInfoMessage.ServerType.PROXY, ServerInfoMessage.ServerType.ANY, CrossServerMessagePacket.MsgCommand.SERVER_INFO, gson.toJson(msg));
         redis.publish(new String(packet.toBytes(), StandardCharsets.UTF_8));
