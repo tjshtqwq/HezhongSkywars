@@ -1,9 +1,10 @@
 package com.hezhong.hezhongskywars.bungee;
 
 import com.google.gson.Gson;
-import com.hezhong.hezhongskywars.utils.cross.RedisMessageManager;
-import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
-import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.cross.networking.RedisMessageManager;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.TeleportToMessage;
+import com.hezhong.hezhongskywars.cross.protocol.CrossServerMessagePacket;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -13,9 +14,9 @@ import java.nio.charset.StandardCharsets;
 
 public class MessageListener {
     private static final Gson gson = new Gson();
-    private final Plugin plugin;
+    private final HezhongSkywarsBungee plugin;
 
-    public MessageListener(Plugin plugin, RedisMessageManager redis) {
+    public MessageListener(HezhongSkywarsBungee plugin, RedisMessageManager redis) {
         this.plugin = plugin;
         // 所有消息都会经过BC（订阅即看到），BC只处理TELEPORT_TO，其余消息只读不处理
         redis.start(message -> ProxyServer.getInstance().getScheduler().runAsync(plugin, () -> handle(message)));
@@ -37,7 +38,15 @@ public class MessageListener {
                     return;
                 }
                 pplayer.connect(target);
-            }
+            } else if (packet.getCommand() == CrossServerMessagePacket.MsgCommand.SERVER_INFO) {
+                ServerInfoMessage msg = gson.fromJson(packet.getMessage(), ServerInfoMessage.class);
+                String server = msg.getServerName();
+                if (msg.isRun()) {
+                    plugin.getAllServers().putIfAbsent(server, new Server(server));
+                    Server s = plugin.getAllServers().get(server);
+                    s.setLastInfoPacket(System.currentTimeMillis()); // 不会是null吧。
+                }
+            };
         } catch (Exception e) {
             e.printStackTrace();
         }

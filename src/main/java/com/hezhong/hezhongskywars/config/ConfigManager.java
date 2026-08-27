@@ -1,16 +1,11 @@
 package com.hezhong.hezhongskywars.config;
 
-import com.cryptomorin.xseries.XEnchantment;
-import com.cryptomorin.xseries.XMaterial;
-import com.cryptomorin.xseries.XPotion;
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.db.DataBaseType;
 import com.hezhong.hezhongskywars.game.GameEvent;
 import com.hezhong.hezhongskywars.utils.ColorT;
-import com.hezhong.hezhongskywars.utils.MathUtil;
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
-import com.hezhong.hezhongskywars.utils.type.Pair;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -104,9 +99,10 @@ public class ConfigManager {
             ConfigValues.BCserverName = mainConfig.getString("bungee.serverName");
 
             // Redis
-            ConfigValues.redisHost = mainConfig.getString("redis.host", "127.0.0.1");
-            ConfigValues.redisPort = mainConfig.getInt("redis.port", 6379);
-            ConfigValues.redisPassword = mainConfig.getString("redis.password", "");
+            ConfigValues.redisHost = mainConfig.getString("redis.host");
+            ConfigValues.redisPort = mainConfig.getInt("redis.port");
+            ConfigValues.redisPassword = mainConfig.getString("redis.password");
+            ConfigValues.redisSSL = mainConfig.getBoolean("redis.ssl");
             ConfigValues.redisChannel = mainConfig.getString("redis.channel", "hsw:csm");
 
             ConfigValues.coinsWinAdd = mainConfig.getInt("coins.winAdd");

@@ -17,10 +17,11 @@ bungee:
   proxyType: "bc" # bc即BungeeCord，vc即Velocity
   serverType: "lobby" # lobby即大厅服务器，game即游戏服务器
   serverName: "lobby1" # BungeeCord中你服务器名称，必须准确
-redis:
-  host: ""
-  port: 1
+redis: # 启用跨服则需要配置Redis，以进行通信
+  host: "127.0.0.1"
+  port: 6379
   password: ""
+  ssl: false # Redis SSL
   channel: "hsw:csm"
 database:
   type: "sqlite" # sqlite / mysql

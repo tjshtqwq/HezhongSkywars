@@ -3,6 +3,7 @@ package com.hezhong.hezhongskywars.game.queue;
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.GameStatus;
+import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.manager.GameManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
 import com.hezhong.hezhongskywars.utils.ColorT;
@@ -19,18 +20,18 @@ public class QueueManager {
             return;
         }
         // 寻找还没开始，且maxPlayers - players最大的游戏
-        List<Game> sortedList = HezhongSkywars.INSTANCE.getGameManager().getGames().values().stream()
-                .filter(g -> (g.getGameStatus() == GameStatus.WAITING || g.getGameStatus() == GameStatus.STARTING) && (g.getMaxPlayers() - g.getAlivePlayers().size()) >= 1)
-                .sorted(Comparator.comparingInt(g -> g.getMaxPlayers() - g.getAlivePlayers().size()))
+        List<SwGameView> sortedList = HezhongSkywars.INSTANCE.getGameManager().getAllGameViews().stream()
+                .filter(g -> (g.getGameStatus() == GameStatus.WAITING || g.getGameStatus() == GameStatus.STARTING) && (g.getMaxPlayers() - g.getPlayers()) >= 1)
+                .sorted(Comparator.comparingInt(g -> g.getMaxPlayers() - g.getPlayers()))
                 .collect(Collectors.toList());
 
         if (sortedList.isEmpty()) {
             sp.getPlayer().sendMessage(ColorT.t("&c&l无可用游戏！"));
             return;
         } else {
-            Game best = sortedList.get(0);
+            SwGameView best = sortedList.get(0);
             sp.getPlayer().sendMessage(ColorT.t("&a把你发送到 " + best.getMapName()));
-            sp.joinGame(HezhongSkywars.INSTANCE.getGameManager().toSwGameView(best), false);
+            sp.joinGame(best, false);
         }
     }
 }

@@ -13,9 +13,9 @@ import com.hezhong.hezhongskywars.utils.ColorT;
 import com.hezhong.hezhongskywars.utils.SimpleMath;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
 import com.hezhong.hezhongskywars.utils.bukkit.CTask;
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
-import com.hezhong.hezhongskywars.utils.cross.UpdateGameMessage;
-import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.UpdateGameMessage;
+import com.hezhong.hezhongskywars.cross.protocol.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.CustomItem;
 import com.hezhong.hezhongskywars.utils.type.Pair;
 import lombok.Getter;
@@ -58,9 +58,9 @@ public class Game {
     public Game(String mapName, World world, Map<Location, Chest> chests, List<Location> spawns, List<GameEvent> events) {
         this.mapName = mapName;
         this.world = world;
-        setGameStatus(GameStatus.WAITING);
         allPlayers = new ArrayList<>();
         playingPlayerStatus = new ConcurrentHashMap<>();
+        setGameStatus(GameStatus.WAITING);
         this.chests = chests;
         this.spawns = new ArrayList<>();
         this.events = events;
@@ -97,6 +97,7 @@ public class Game {
                 return false;
             }
             allPlayers.add(player);
+            crossUpdate();
             restoreHide(player);
             playingPlayerStatus.put(player.getUniqueId(), new SwPlayingGamePlayer(player, false));
             // 将玩家传送到出生点
@@ -626,6 +627,11 @@ public class Game {
     public void setGameStatus(GameStatus gameStatus) {
         this.gameStatus = gameStatus;
         // Bungee则发包
+        crossUpdate();
+        HSWGameStatusChangeEvent changeEvent = new HSWGameStatusChangeEvent(this, gameStatus);
+        Bukkit.getPluginManager().callEvent(changeEvent);
+    }
+    public void crossUpdate() {
         if (ConfigValues.bungeeEnabled) {
             UpdateGameMessage infoMsg = new UpdateGameMessage(HezhongSkywars.INSTANCE.getGameManager().toSwGameView(this));
 
@@ -633,8 +639,6 @@ public class Game {
                     CrossServerMessagePacket.GSON.toJson(infoMsg));
             HezhongSkywars.INSTANCE.getCrossServerMessageSender().sendTo(packet);
         }
-        HSWGameStatusChangeEvent changeEvent = new HSWGameStatusChangeEvent(this, gameStatus);
-        Bukkit.getPluginManager().callEvent(changeEvent);
     }
     public void resetGame() {
         setGameStatus(GameStatus.RESETTING);

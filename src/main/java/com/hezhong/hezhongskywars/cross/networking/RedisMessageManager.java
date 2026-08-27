@@ -1,11 +1,6 @@
-package com.hezhong.hezhongskywars.utils.cross;
+package com.hezhong.hezhongskywars.cross.networking;
 
-import redis.clients.jedis.DefaultJedisClientConfig;
-import redis.clients.jedis.HostAndPort;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisClientConfig;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPubSub;
+import redis.clients.jedis.*;
 
 import java.util.function.Consumer;
 import java.util.logging.Logger;
@@ -15,6 +10,7 @@ public class RedisMessageManager {
     private final int port;
     private final String password;
     private final String channel;
+    private final boolean ssl;
     private final Logger logger;
 
     private JedisPool pool;
@@ -22,11 +18,12 @@ public class RedisMessageManager {
     private Thread subThread;
     private Consumer<String> onMessage;
 
-    public RedisMessageManager(String host, int port, String password, String channel, Logger logger) {
+    public RedisMessageManager(String host, int port, String password, String channel, Logger logger, boolean ssl) {
         this.host = host;
         this.port = port;
         this.password = password;
         this.channel = channel;
+        this.ssl = ssl;
         this.logger = logger;
     }
 
@@ -35,7 +32,7 @@ public class RedisMessageManager {
         running = true;
         JedisClientConfig config = DefaultJedisClientConfig.builder()
                 .password(password == null || password.isEmpty() ? null : password)
-                .ssl(true) // Redis Cloud 等云端实例需要TLS
+                .ssl(ssl)
                 .connectionTimeoutMillis(5000)
                 .socketTimeoutMillis(5000)
                 .build();

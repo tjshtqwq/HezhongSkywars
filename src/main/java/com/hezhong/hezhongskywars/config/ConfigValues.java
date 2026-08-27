@@ -1,6 +1,6 @@
 package com.hezhong.hezhongskywars.config;
 
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
 import org.bukkit.GameMode;
 
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ public class ConfigValues {
     public static int redisPort;
     public static String redisPassword;
     public static String redisChannel;
+    public static boolean redisSSL;
 
     public static Map<String, ChestConfig> chestConfigs = new HashMap<>(); // K:V type:config
     public static Map<String, MapConfig> mapConfigs = new HashMap<>(); // K:V mapName:config

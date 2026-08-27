@@ -63,7 +63,7 @@ public class SelectMapGUI extends MultiPageGUI {
             lore.add("&b启动中");
             lore.add("&9点击加入&7|&e右键旁观");
 
-        } if (view.getGameStatus() == GameStatus.PLAYING) {
+        } else if (view.getGameStatus() == GameStatus.PLAYING) {
             dis = new ItemStack(XMaterial.REDSTONE_BLOCK.parseMaterial());
             lore.add("&c游玩中");
             lore.add("&9点击旁观");

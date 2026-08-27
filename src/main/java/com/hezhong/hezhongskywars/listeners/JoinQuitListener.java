@@ -2,16 +2,14 @@ package com.hezhong.hezhongskywars.listeners;
 
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.config.ConfigValues;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
 import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.manager.ListenerManager;
 import com.hezhong.hezhongskywars.manager.SwPlayerManager;
 import com.hezhong.hezhongskywars.player.SwPlayer;
-import com.hezhong.hezhongskywars.task.PlayerScoreBoardTask;
 import com.hezhong.hezhongskywars.utils.ColorT;
-import com.hezhong.hezhongskywars.utils.SpecialItems;
-import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
-import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
+import com.hezhong.hezhongskywars.cross.protocol.TeleportRequestMessage;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import org.bukkit.Bukkit;
@@ -19,7 +17,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -67,12 +64,23 @@ public class JoinQuitListener implements Listener {
         ListenerManager.independentWorldManager.handlePostJoin(event);
 
         // 尝试进游戏
-        if (requested.containsKey(player.getUniqueId())) {
-            TeleportRequestMessage msg = requested.remove(player.getUniqueId());
-            SwGameView gameView = HezhongSkywars.INSTANCE.getGameManager().getGameView(msg.getTargetGame(), true);
-            p.joinGame(gameView, msg.isSpectate());
+        if (ConfigValues.bungeeEnabled && ConfigValues.serverType == ServerInfoMessage.ServerType.GAME) {
+            if (requested.containsKey(player.getUniqueId())) {
+                TeleportRequestMessage msg = requested.remove(player.getUniqueId());
+                SwGameView gameView = HezhongSkywars.INSTANCE.getGameManager().getGameView(msg.getTargetGame(), true);
+                if (!p.joinGame(gameView, msg.isSpectate())) {
+                    player.sendMessage(ColorT.t("&c&l目标游戏当前不可用，将你发送回大厅......"));
+                    player.performCommand("hsw hub");
+                }
+            } else {
+                player.sendMessage(ColorT.t("&c&l你不应进入此服务器，将你发送回大厅......"));
+                player.performCommand("hsw hub");
+            }
         }
 
+
+        // 顺便处理超时的人
+        requested.entrySet().removeIf(e -> (System.currentTimeMillis() - e.getValue().getTimestamp()) > (10 * 1000L));
     }
 
     @EventHandler

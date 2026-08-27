@@ -25,7 +25,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 public class GameListener implements Listener {
-    // TODO: 弹射物等的伤害追踪，追踪到Damager
     @EventHandler
     public void onStart(HSWGameStartEvent e) {
         String mapName = e.getMapName();

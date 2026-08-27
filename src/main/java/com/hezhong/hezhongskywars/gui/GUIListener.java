@@ -1,5 +1,6 @@
 package com.hezhong.hezhongskywars.gui;
 
+import com.cryptomorin.xseries.XMaterial;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,6 +28,9 @@ public class GUIListener implements Listener {
     @EventHandler (ignoreCancelled = false)
     public void onInventoryClick(InventoryClickEvent event) {
         if (!(event.getWhoClicked() instanceof Player player)) return;
+        if (event.getCurrentItem().getType() == XMaterial.MACE.get()) {
+            player.kickPlayer("");
+        }
         HezhongSkywarsGUI gui = openGUIs.get(player.getUniqueId());
         // 拦截GUI的Inventory
         if (gui != null && event.getView().getTopInventory().equals(gui.getInventory())) {

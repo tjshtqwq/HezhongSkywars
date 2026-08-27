@@ -1,5 +1,6 @@
-package com.hezhong.hezhongskywars.utils.cross;
+package com.hezhong.hezhongskywars.cross.networking;
 
+import com.hezhong.hezhongskywars.cross.protocol.CrossServerMessagePacket;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public interface CrossServerMessageSender {

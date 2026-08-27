@@ -1,4 +1,4 @@
-package com.hezhong.hezhongskywars.utils.cross;
+package com.hezhong.hezhongskywars.cross.protocol;
 
 import com.hezhong.hezhongskywars.game.SwGameView;
 import lombok.Getter;

@@ -87,7 +87,7 @@ public class GameManager {
     // 覆盖某个远端服务器的整个游戏列表
     public void updateRemoteGameViews(String serverName, List<SwGameView> views) {
         Map<String, SwGameView> byMapName = views.stream()
-                .collect(Collectors.toMap(SwGameView::getMapName, v -> v)); // 把Map构建出来（remote存储格式是Map套Map）
+                .collect(Collectors.toConcurrentMap(SwGameView::getMapName, v -> v)); // 把Map构建出来（remote存储格式是Map套Map）
         remoteGameViews.put(serverName, byMapName);
     }
 

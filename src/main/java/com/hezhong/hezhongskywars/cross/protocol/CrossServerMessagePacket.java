@@ -1,7 +1,7 @@
-package com.hezhong.hezhongskywars.utils.cross;
+package com.hezhong.hezhongskywars.cross.protocol;
 
 import com.google.gson.Gson;
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage.ServerType;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage.ServerType;
 import lombok.Getter;
 
 @Getter

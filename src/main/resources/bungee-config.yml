@@ -1,7 +1,7 @@
-# BungeeCord端 HezhongSkywars 配置
-# 该文件由BC插件释放到 plugins/HezhongSkywars/config.yml
+# Hezhong Skywars > CROSS SERVER BungeeCord Config
 redis:
   host: ""
   port: 1
   password: ""
-  channel: ""
+  ssl: false
+  channel: "hsw:csm"

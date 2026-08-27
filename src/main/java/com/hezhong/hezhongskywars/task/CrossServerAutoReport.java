@@ -2,8 +2,8 @@ package com.hezhong.hezhongskywars.task;
 
 import com.hezhong.hezhongskywars.HezhongSkywars;
 import com.hezhong.hezhongskywars.config.ConfigValues;
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
-import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.CrossServerMessagePacket;
 import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 

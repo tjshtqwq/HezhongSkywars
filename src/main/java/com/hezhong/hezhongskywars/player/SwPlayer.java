@@ -6,10 +6,10 @@ import com.hezhong.hezhongskywars.game.Game;
 import com.hezhong.hezhongskywars.game.SwGameView;
 import com.hezhong.hezhongskywars.player.party.SwParty;
 import com.hezhong.hezhongskywars.utils.SpecialItems;
-import com.hezhong.hezhongskywars.utils.cross.ServerInfoMessage;
-import com.hezhong.hezhongskywars.utils.cross.TeleportRequestMessage;
-import com.hezhong.hezhongskywars.utils.cross.TeleportToMessage;
-import com.hezhong.hezhongskywars.utils.cross.CrossServerMessagePacket;
+import com.hezhong.hezhongskywars.cross.protocol.ServerInfoMessage;
+import com.hezhong.hezhongskywars.cross.protocol.TeleportRequestMessage;
+import com.hezhong.hezhongskywars.cross.protocol.TeleportToMessage;
+import com.hezhong.hezhongskywars.cross.protocol.CrossServerMessagePacket;
 import com.hezhong.hezhongskywars.utils.type.DatabaseStatsData;
 import lombok.Getter;
 import lombok.Setter;
@@ -80,8 +80,12 @@ public class SwPlayer {
                     }
                 }
             }
-            if (g.addPlayer(player, spectate)) playingGame = g;
-            return true;
+            if (g.addPlayer(player, spectate)) {
+                playingGame = g;
+                return true;
+            } else {
+                return false;
+            }
         } else {
             if (ConfigValues.serverType == ServerInfoMessage.ServerType.LOBBY) {
                 // 在大厅，可以传送了
